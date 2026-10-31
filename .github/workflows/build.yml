@@ -9,16 +9,12 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - uses: android-actions/setup-android@v3
-      - uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: 8.5
-      - name: Build APK
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
-      - name: Upload APK 3 Varian
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Build 3 APK Bekasi
+        run: gradle assembleDebug --no-daemon
+      - name: Upload 3 APK
         uses: actions/upload-artifact@v4
         with:
-          name: APK-3-Varian-Bekasi
+          name: GlassTV-3-APK-Bekasi
           path: app/build/outputs/apk/**/debug/*.apk
