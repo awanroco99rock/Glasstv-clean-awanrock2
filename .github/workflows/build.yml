@@ -10,78 +10,14 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: android-actions/setup-android@v3
-      
-      - name: Buat Project Otomatis
-        run: |
-          mkdir -p app/src/main/java/com/glasstv/bekasi/clean
-          echo "include ':app'" > settings.gradle
-          cat > app/build.gradle <<'EOF'
-          plugins { id 'com.android.application' }
-          android {
-            namespace 'com.glasstv.bekasi.clean'
-            compileSdk 34
-            defaultConfig {
-              applicationId "com.glasstv.bekasi.clean"
-              minSdk 23
-              targetSdk 34
-              versionCode 1
-              versionName "1.0"
-            }
-            flavorDimensions "stb"
-            productFlavors {
-              mxqPro { dimension "stb" }
-              akari { dimension "stb" }
-              b860h { dimension "stb" }
-            }
-            compileOptions {
-              sourceCompatibility JavaVersion.VERSION_17
-              targetCompatibility JavaVersion.VERSION_17
-            }
-          }
-          dependencies {
-            implementation 'androidx.appcompat:appcompat:1.6.1'
-          }
-          EOF
-          cat > app/src/main/AndroidManifest.xml <<'EOF'
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-            <application android:label="GlassTV Bekasi">
-              <activity android:name=".MainActivity" android:exported="true">
-                <intent-filter>
-                  <action android:name="android.intent.action.MAIN"/>
-                  <category android:name="android.intent.category.LAUNCHER"/>
-                  <category android:name="android.intent.category.HOME"/>
-                </intent-filter>
-              </activity>
-            </application>
-          </manifest>
-          EOF
-          cat > app/src/main/java/com/glasstv/bekasi/clean/MainActivity.kt <<'EOF'
-          package com.glasstv.bekasi.clean
-          import android.os.Bundle
-          import androidx.appcompat.app.AppCompatActivity
-          import android.widget.TextView
-          class MainActivity : AppCompatActivity() {
-            override fun onCreate(savedInstanceState: Bundle?) {
-              super.onCreate(savedInstanceState)
-              val tv = TextView(this)
-              tv.text = "GlassTV Bekasi Clean OK - ${BuildConfig.FLAVOR}"
-              tv.textSize = 24f
-              setContentView(tv)
-            }
-          }
-          EOF
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Build 3 APK
+      - uses: gradle/actions/setup-gradle@v3
+      - name: Build APK
         run: |
           gradle wrapper --gradle-version 8.5
           chmod +x gradlew
           ./gradlew assembleMxqProRelease assembleAkariRelease assembleB860hRelease
-
-      - name: Upload APK
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: APK-GlassTV-3-Varian
+          name: APK-3-Varian
           path: app/build/outputs/apk/**/release/*.apk
